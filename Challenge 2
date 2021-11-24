@@ -1,4 +1,4 @@
-source ~/my_app/env/bin/activate
+
 
 Pre req: python 3.6.8
 awscli
