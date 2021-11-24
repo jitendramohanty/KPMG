@@ -1,0 +1,48 @@
+source ~/my_app/env/bin/activate
+
+Pre req: python 3.6.8
+awscli
+boto3
+
+Below all operation are performed under root user.
+
+Create virtual env: sudo yum install python3 -y
+Activate this : source ~/my_app/env/bin/activate
+Install and upgrade Pip : pip install pip --upgrade
+Install boto3 : pip install boto3
+Configure aws credentails : aws configure  -> enter your accesskey and secret key.Region can be configured later.
+Check the configure : aws configure list
+
+Save below contents into get_my_ins.py
+
+
+import boto3
+from botocore.config import Config
+
+my_config = Config(
+    region_name = 'us-east-1',
+    signature_version = 'v4',
+    retries = {
+        'max_attempts': 10,
+        'mode': 'standard'
+    }
+)
+
+ec2_ins = boto3.client('ec2', config=my_config)
+east_ec2 = ec2_ins.describe_instances()
+for ins_detail in east_ec2['Reservations']:
+        print(ins_detail)
+
+
+Run using python get_my_ins.py
+
+Pls note: I m using regien us-east-1
+
+sample output for one instance i-0f6845794c32389ea:
+
+This can be filterout based on instance id further more.
+
+
+{'Groups': [], 'Instances': [{'AmiLaunchIndex': 0, 'ImageId': 'ami-07ecf4c6ce7c758ce', 'InstanceId': 'i-0f6845794c32389ea', 'InstanceType': 'r5.xlarge', 'KeyName': 'isdlc', 'LaunchTime': datetime.datetime(2021, 11, 24, 10, 6, tzinfo=tzlocal()), 'Monitoring': {'State': 'disabled'}, 'Placement': {'AvailabilityZone': 'us-east-1d', 'GroupName': '', 'Tenancy': 'default'}, 'PrivateDnsName': 'ip-10-103-68-190.ec2.internal', 'PrivateIpAddress': '***.***.***.***', 'ProductCodes': [{'ProductCodeId': '6oi4r8uijsnprfidyyeawwest', 'ProductCodeType': 'marketplace'}], 'PublicDnsName': '', 'State': {'Code': 16, 'Name': 'running'}, 'StateTransitionReason': '', 'SubnetId': 'subnet-****', 'VpcId': 'vpc-0ed5d5a1d70****', 'Architecture': 'x86_64', 'BlockDeviceMappings': [{'DeviceName': '/dev/sda1', 'Ebs': {'AttachTime': datetime.datetime(2021, 11, 24, 10, 6, 1, tzinfo=tzlocal()), 'DeleteOnTermination': False, 'Status': 'attached', 'VolumeId': 'vol-0dd94fd5da8582a53'}}, {'DeviceName': '/dev/sdb', 'Ebs': {'AttachTime': datetime.datetime(2021, 11, 24, 10, 6, 1, tzinfo=tzlocal()), 'DeleteOnTermination': False, 'Status': 'attached', 'VolumeId': 'vol-0bd04086050955c48'}}], 'ClientToken': '16377482330*****', 'EbsOptimized': True, 'EnaSupport': True, 'Hypervisor': 'xen', 'NetworkInterfaces': [{'Attachment': {'AttachTime': datetime.datetime(2021, 11, 24, 10, 6, tzinfo=tzlocal()), 'AttachmentId': 'eni-attach-02ab4d3af4b9dea7b', 'DeleteOnTermination': True, 'DeviceIndex': 0, 'Status': 'attached', 'NetworkCardIndex': 0}, 'Description': 'Primary network interface', 'Groups': [{'GroupName': 'jenkins-build-slave', 'GroupId': 'sg-04c160b75bf727f08'}, {'GroupName': 'GIT_PSS_Internal_SG', 'GroupId': 'sg-0921cbf00aa28be65'}], 'Ipv6Addresses': [], 'MacAddress': '12:42:9b:81:c0:d3', 'NetworkInterfaceId': 'eni-03d56f64dec187849', 'OwnerId': '656639642693', 'PrivateIpAddress': '10.103.68.190', 'PrivateIpAddresses': [{'Primary': True, 'PrivateIpAddress': '10.103.68.190'}], 'SourceDestCheck': True, 'Status': 'in-use', 'SubnetId': 'subnet-0cc9af55fc85a3c9e', 'VpcId': 'vpc-0ed5d5a1d700de0ef', 'InterfaceType': 'interface'}], 'RootDeviceName': '/dev/sda1', 'RootDeviceType': 'ebs', 'SecurityGroups': [{'GroupName': 'jenkins-build-slave', 'GroupId': 'sg-04c160b75bf727f08'}, {'GroupName': 'GIT_PSS_Internal_SG', 'GroupId': 'sg-0921cbf00aa28be65'}], 'SourceDestCheck': True, 'Tags': [{'Key': 'Name', 'Value': 'Jenkins-Slave-centos6'}], 'VirtualizationType': 'hvm', 'CpuOptions': {'CoreCount': 2, 'ThreadsPerCore': 2}, 'CapacityReservationSpecification': {'CapacityReservationPreference': 'open'}, 'HibernationOptions': {'Configured': False}, 'MetadataOptions': {'State': 'applied', 'HttpTokens': 'optional', 'HttpPutResponseHopLimit': 1, 'HttpEndpoint': 'enabled', 'HttpProtocolIpv6': 'disabled'}, 'EnclaveOptions': {'Enabled': False}, 'PlatformDetails': 'Linux/UNIX', 'UsageOperation': 'RunInstances', 'UsageOperationUpdateTime': datetime.datetime(2021, 11, 24, 10, 6, tzinfo=tzlocal()), 'PrivateDnsNameOptions': {'HostnameType': 'ip-name', 'EnableResourceNameDnsARecord': False, 'EnableResourceNameDnsAAAARecord': False}}], 'OwnerId': '656639642693', 'ReservationId': 'r-08b4812c0485ff468'}
+
+

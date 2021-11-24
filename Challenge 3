@@ -1,0 +1,17 @@
+Write a funtion , that will accept an nested object and a key(joined by forward slash "/"). Function should return the matched value from the nested object.
+
+
+
+try:
+	def get_value_by_path(dict_obj, path_string):
+	    path_list = path_string.split('/')[0:]
+	    obj_ptr = dict_obj
+	    for elem in path_list:
+	        obj_ptr = obj_ptr[elem]
+	    return obj_ptr
+
+	dict_obj = {"a":{"b":{"c":"d"}}}
+	path_string = "a/b/c"
+	print(get_value_by_path(dict_obj, path_string))
+except Exception as e:
+	print("key error")
